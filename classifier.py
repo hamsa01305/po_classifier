@@ -17,15 +17,21 @@ Supplier:
 {supplier}
 """
 
-    response = client.chat.completions.create(
-        model=MODEL,
-        temperature=0.0,
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_prompt}
-        ]
-    )
+    try:
+        response = client.chat.completions.create(
+            model=MODEL,
+            temperature=0.0,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": user_prompt}
+            ]
+        )
 
+        # ✅ Safe return
+        return response.choices[0].message.content.strip()
 
-    return response.choices[0].message.content
+    except Exception as e:
+        # ✅ Prevent app crash
+        return None
+
 
