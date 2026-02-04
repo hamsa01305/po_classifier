@@ -16,8 +16,16 @@ if st.button("Classify"):
         with st.spinner("Classifying..."):
             result = classify_po(po_description, supplier)
 
-        try:
-            st.json(json.loads(result))
-        except Exception:
-            st.error("Invalid model response")
-            st.text(result)
+        # ✅ Handle empty / None response safely
+        if result is None or str(result).strip() == "":
+            st.error("No response received from the model.")
+        else:
+            # ✅ Try parsing JSON safely
+            try:
+                parsed_result = json.loads(result)
+                st.json(parsed_result)
+            except Exception:
+                # ✅ Show raw output instead of crashing
+                st.error("Model response is not valid JSON.")
+                st.subheader("Raw model output")
+                st.code(result)
